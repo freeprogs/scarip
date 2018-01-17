@@ -1,1 +1,4 @@
 notes
+src_build/
+build/
+Makefile
