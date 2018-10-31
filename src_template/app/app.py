@@ -23,7 +23,8 @@
 import sys
 from PyQt5.QtWidgets import (QApplication,
                              QMainWindow,
-                             QDesktopWidget)
+                             QDesktopWidget,
+                             QMessageBox)
 from mainwindow import Ui_MainWindow
 
 
@@ -32,6 +33,7 @@ class App(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.setup_ui()
         self.center()
         self.show()
 
@@ -41,6 +43,11 @@ class App(QMainWindow, Ui_MainWindow):
         rect.moveCenter(best_position)
         self.move(rect.topLeft())
 
+    def setup_ui(self):
+        self.actionAbout.triggered.connect(self.print_about)
+
+    def print_about(self):
+        QMessageBox.about(self, 'About', 'This is a scanner.')
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
