@@ -27,6 +27,9 @@ from PyQt5.QtWidgets import (QApplication,
                              QMessageBox)
 from mainwindow import Ui_MainWindow
 
+from PyQt5.QtCore import QEvent
+from PyQt5.QtGui import QStatusTipEvent
+
 
 class App(QMainWindow, Ui_MainWindow):
 
@@ -45,6 +48,13 @@ class App(QMainWindow, Ui_MainWindow):
 
     def setup_ui(self):
         self.actionAbout.triggered.connect(self.print_about)
+        self.statusbar.showMessage('Ready for scan')
+
+    def event(self, e):
+        if e.type() == QEvent.StatusTip:
+            if e.tip() == '':
+                e = QStatusTipEvent(self.statusbar.currentMessage())
+        return super().event(e)
 
     def print_about(self):
         QMessageBox.about(self, 'About', 'This is a scanner.')
