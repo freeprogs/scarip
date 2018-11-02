@@ -92,6 +92,22 @@ class App(QMainWindow, Ui_MainWindow):
     def onQuitButtonClicked(self):
         self.close()
 
+    def onIPRangeCopyButtonClicked(self):
+        self.spinBoxIPRangeLast1.setValue(self.spinBoxIPRangeFirst1.value())
+        self.spinBoxIPRangeLast2.setValue(self.spinBoxIPRangeFirst2.value())
+        self.spinBoxIPRangeLast3.setValue(self.spinBoxIPRangeFirst3.value())
+        self.spinBoxIPRangeLast4.setValue(self.spinBoxIPRangeFirst4.value())
+
+    def onIPRangeClearButtonClicked(self):
+        self.spinBoxIPRangeFirst1.setValue(0)
+        self.spinBoxIPRangeFirst2.setValue(0)
+        self.spinBoxIPRangeFirst3.setValue(0)
+        self.spinBoxIPRangeFirst4.setValue(0)
+        self.spinBoxIPRangeLast1.setValue(0)
+        self.spinBoxIPRangeLast2.setValue(0)
+        self.spinBoxIPRangeLast3.setValue(0)
+        self.spinBoxIPRangeLast4.setValue(0)
+
     def onTogglePorts(self):
         if self.checkBoxPortsEnabled.isChecked():
             self.pushButtonPortsClear.setDisabled(False)
@@ -113,12 +129,6 @@ class App(QMainWindow, Ui_MainWindow):
 
     def onPortsClearButtonClicked(self):
         print('ports clear')
-
-    def onIPRangeCopyButtonClicked(self):
-        print('iprange copy')
-
-    def onIPRangeClearButtonClicked(self):
-        print('iprange clear')
 
 
 if __name__ == '__main__':
