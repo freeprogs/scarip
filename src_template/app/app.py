@@ -47,11 +47,28 @@ class App(QMainWindow, Ui_MainWindow):
         self.move(rect.topLeft())
 
     def setup_ui(self):
+        self.setup_ui_menu()
+        self.setup_ui_statusbar()
+        self.setup_ui_control_buttons()
+        self.setup_ui_iprange_frame()
+        self.setup_ui_ports_frame()
+
+    def setup_ui_menu(self):
         self.actionAbout.triggered.connect(self.print_about)
+
+    def setup_ui_statusbar(self):
         self.statusbar.showMessage('Ready for scan')
+
+    def setup_ui_control_buttons(self):
         self.pushButtonControlButtonsScan.clicked.connect(self.onScanButtonClicked)
         self.pushButtonControlButtonsCancel.clicked.connect(self.onCancelButtonClicked)
         self.pushButtonControlButtonsQuit.clicked.connect(self.onQuitButtonClicked)
+
+    def setup_ui_iprange_frame(self):
+        pass
+
+    def setup_ui_ports_frame(self):
+        pass
 
     def event(self, e):
         if e.type() == QEvent.StatusTip:
