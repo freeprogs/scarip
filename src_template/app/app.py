@@ -84,7 +84,33 @@ class App(QMainWindow, Ui_MainWindow):
         QMessageBox.about(self, 'About', 'This is a scanner.')
 
     def onScanButtonClicked(self):
-        print('scan')
+        ip_first = '{}.{}.{}.{}'.format(
+            self.spinBoxIPRangeFirst1.value(),
+            self.spinBoxIPRangeFirst2.value(),
+            self.spinBoxIPRangeFirst3.value(),
+            self.spinBoxIPRangeFirst4.value())
+        ip_last = '{}.{}.{}.{}'.format(
+            self.spinBoxIPRangeLast1.value(),
+            self.spinBoxIPRangeLast2.value(),
+            self.spinBoxIPRangeLast3.value(),
+            self.spinBoxIPRangeLast4.value())
+        port_first = self.spinBoxPortsFirst.value()
+        port_last = self.spinBoxPortsLast.value()
+        if self.checkBoxPortsEnabled.isChecked():
+            textfmt = ('Scan from {} to {}'
+                       ' with ports from {} to {}')
+            text = textfmt.format(
+                ip_first,
+                ip_last,
+                port_first,
+                port_last)
+        else:
+            textfmt = ('Scan from {} to {}'
+                       ' ping only')
+            text = textfmt.format(
+                ip_first,
+                ip_last)
+        self.textLog.setText(text)
 
     def onCancelButtonClicked(self):
         print('cancel')
