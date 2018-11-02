@@ -125,10 +125,11 @@ class App(QMainWindow, Ui_MainWindow):
             self.spinBoxPortsLast.setDisabled(True)
 
     def onPortsCopyButtonClicked(self):
-        print('ports copy')
+        self.spinBoxPortsLast.setValue(self.spinBoxPortsFirst.value())
 
     def onPortsClearButtonClicked(self):
-        print('ports clear')
+        self.spinBoxPortsFirst.setValue(0)
+        self.spinBoxPortsLast.setValue(0)
 
 
 if __name__ == '__main__':
