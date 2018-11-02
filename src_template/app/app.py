@@ -65,7 +65,8 @@ class App(QMainWindow, Ui_MainWindow):
         self.pushButtonControlButtonsQuit.clicked.connect(self.onQuitButtonClicked)
 
     def setup_ui_iprange_frame(self):
-        pass
+        self.pushButtonIPRangeCopy.clicked.connect(self.onIPRangeCopyButtonClicked)
+        self.pushButtonIPRangeClear.clicked.connect(self.onIPRangeClearButtonClicked)
 
     def setup_ui_ports_frame(self):
         self.checkBoxPortsEnabled.setChecked(True)
@@ -112,6 +113,12 @@ class App(QMainWindow, Ui_MainWindow):
 
     def onPortsClearButtonClicked(self):
         print('ports clear')
+
+    def onIPRangeCopyButtonClicked(self):
+        print('iprange copy')
+
+    def onIPRangeClearButtonClicked(self):
+        print('iprange clear')
 
 
 if __name__ == '__main__':
