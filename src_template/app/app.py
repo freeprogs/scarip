@@ -68,7 +68,10 @@ class App(QMainWindow, Ui_MainWindow):
         pass
 
     def setup_ui_ports_frame(self):
-        pass
+        self.checkBoxPortsEnabled.setChecked(True)
+        self.checkBoxPortsEnabled.stateChanged.connect(self.onTogglePorts)
+        self.pushButtonPortsCopy.clicked.connect(self.onPortsCopyButtonClicked)
+        self.pushButtonPortsClear.clicked.connect(self.onPortsClearButtonClicked)
 
     def event(self, e):
         if e.type() == QEvent.StatusTip:
@@ -87,6 +90,28 @@ class App(QMainWindow, Ui_MainWindow):
 
     def onQuitButtonClicked(self):
         self.close()
+
+    def onTogglePorts(self):
+        if self.checkBoxPortsEnabled.isChecked():
+            self.pushButtonPortsClear.setDisabled(False)
+            self.pushButtonPortsCopy.setDisabled(False)
+            self.labelPortsFirst.setDisabled(False)
+            self.spinBoxPortsFirst.setDisabled(False)
+            self.labelPortsLast.setDisabled(False)
+            self.spinBoxPortsLast.setDisabled(False)
+        else:
+            self.pushButtonPortsClear.setDisabled(True)
+            self.pushButtonPortsCopy.setDisabled(True)
+            self.labelPortsFirst.setDisabled(True)
+            self.spinBoxPortsFirst.setDisabled(True)
+            self.labelPortsLast.setDisabled(True)
+            self.spinBoxPortsLast.setDisabled(True)
+
+    def onPortsCopyButtonClicked(self):
+        print('ports copy')
+
+    def onPortsClearButtonClicked(self):
+        print('ports clear')
 
 
 if __name__ == '__main__':
