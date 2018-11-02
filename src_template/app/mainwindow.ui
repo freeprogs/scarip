@@ -114,15 +114,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <rect>
        <x>30</x>
        <y>80</y>
-       <width>71</width>
+       <width>91</width>
        <height>29</height>
       </rect>
+     </property>
+     <property name="maximum">
+      <number>65535</number>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButtonPortsClear">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>140</x>
        <y>170</y>
        <width>84</width>
        <height>31</height>
@@ -137,15 +140,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <rect>
        <x>30</x>
        <y>170</y>
-       <width>71</width>
+       <width>91</width>
        <height>29</height>
       </rect>
+     </property>
+     <property name="maximum">
+      <number>65535</number>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButtonPortsCopy">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>140</x>
        <y>80</y>
        <width>81</width>
        <height>31</height>
@@ -158,7 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <widget class="QCheckBox" name="checkBoxPortsEnabled">
      <property name="geometry">
       <rect>
-       <x>220</x>
+       <x>230</x>
        <y>90</y>
        <width>93</width>
        <height>20</height>
@@ -186,22 +192,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <rect>
        <x>40</x>
        <y>70</y>
-       <width>271</width>
+       <width>272</width>
        <height>51</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayoutIPRangeFirst">
       <item>
-       <widget class="QSpinBox" name="spinBoxIPRangeFirst1"/>
+       <widget class="QSpinBox" name="spinBoxIPRangeFirst1">
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxIPRangeFirst2"/>
+       <widget class="QSpinBox" name="spinBoxIPRangeFirst2">
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxIPRangeFirst3"/>
+       <widget class="QSpinBox" name="spinBoxIPRangeFirst3">
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxIPRangeFirst4"/>
+       <widget class="QSpinBox" name="spinBoxIPRangeFirst4">
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -210,22 +232,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <rect>
        <x>40</x>
        <y>160</y>
-       <width>271</width>
+       <width>272</width>
        <height>51</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayoutIPRangeLast">
       <item>
-       <widget class="QSpinBox" name="spinBoxIPRangeLast1"/>
+       <widget class="QSpinBox" name="spinBoxIPRangeLast1">
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxIPRangeLast2"/>
+       <widget class="QSpinBox" name="spinBoxIPRangeLast2">
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxIPRangeLast3"/>
+       <widget class="QSpinBox" name="spinBoxIPRangeLast3">
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxIPRangeLast4"/>
+       <widget class="QSpinBox" name="spinBoxIPRangeLast4">
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
