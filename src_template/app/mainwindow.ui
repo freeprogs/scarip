@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      <rect>
       <x>805</x>
       <y>270</y>
-      <width>81</width>
+      <width>86</width>
       <height>121</height>
      </rect>
     </property>
@@ -70,29 +70,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QScrollArea" name="scrollAreaLog">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>270</y>
-      <width>781</width>
-      <height>231</height>
-     </rect>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>777</width>
-       <height>227</height>
-      </rect>
-     </property>
-    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBoxPorts">
     <property name="geometry">
@@ -304,6 +281,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <string>Clear</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QTextEdit" name="textLog">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>270</y>
+      <width>781</width>
+      <height>231</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
