@@ -49,6 +49,9 @@ class App(QMainWindow, Ui_MainWindow):
     def setup_ui(self):
         self.actionAbout.triggered.connect(self.print_about)
         self.statusbar.showMessage('Ready for scan')
+        self.pushButtonControlButtonsScan.clicked.connect(self.onScanButtonClicked)
+        self.pushButtonControlButtonsCancel.clicked.connect(self.onCancelButtonClicked)
+        self.pushButtonControlButtonsQuit.clicked.connect(self.onQuitButtonClicked)
 
     def event(self, e):
         if e.type() == QEvent.StatusTip:
@@ -58,6 +61,16 @@ class App(QMainWindow, Ui_MainWindow):
 
     def print_about(self):
         QMessageBox.about(self, 'About', 'This is a scanner.')
+
+    def onScanButtonClicked(self):
+        print('scan')
+
+    def onCancelButtonClicked(self):
+        print('cancel')
+
+    def onQuitButtonClicked(self):
+        self.close()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
