@@ -30,6 +30,11 @@ from mainwindow import Ui_MainWindow
 from PyQt5.QtCore import QEvent
 from PyQt5.QtGui import QStatusTipEvent
 
+from PyQt5.QtCore import (QObject,
+                          pyqtSignal,
+                          QThread,
+                          QTimer)
+
 
 class App(QMainWindow, Ui_MainWindow):
 
@@ -112,8 +117,23 @@ class App(QMainWindow, Ui_MainWindow):
                 ip_last)
         self.textLog.setText(text)
 
+        self.thread = QThread(self)
+        self.worker = ScanTask()
+        thread = self.thread
+        worker = self.worker
+        worker.moveToThread(thread)
+        worker.message[str].connect(self.onScanTaskMessageSignal)
+        thread.started.connect(worker.process)
+        worker.finished.connect(thread.quit)
+        worker.finished.connect(worker.deleteLater)
+        thread.finished.connect(thread.deleteLater)
+        thread.start()
+
+    def onScanTaskMessageSignal(self, text):
+        self.textLog.append(text)
+
     def onCancelButtonClicked(self):
-        print('cancel')
+        self.textLog.append('cancel')
 
     def onQuitButtonClicked(self):
         self.close()
@@ -156,6 +176,27 @@ class App(QMainWindow, Ui_MainWindow):
     def onPortsClearButtonClicked(self):
         self.spinBoxPortsFirst.setValue(0)
         self.spinBoxPortsLast.setValue(0)
+
+
+class ScanTask(QObject):
+
+    message = pyqtSignal(str)
+    finished = pyqtSignal()
+
+    def process(self):
+        self.timer = QTimer()
+        self.nticks = 1
+        self.maxticks = 10
+        self.timer.timeout.connect(self.onTimeout)
+        self.timer.start(500)
+
+    def onTimeout(self):
+        self.message.emit('Tick #' + str(self.nticks))
+        if self.nticks < self.maxticks:
+            self.nticks += 1
+        else:
+            self.timer.stop()
+            self.finished.emit()
 
 
 if __name__ == '__main__':
