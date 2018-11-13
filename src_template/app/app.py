@@ -35,6 +35,8 @@ from PyQt5.QtCore import (QObject,
                           QThread,
                           QTimer)
 
+import ipaddress
+
 
 class App(QMainWindow, Ui_MainWindow):
 
@@ -117,8 +119,13 @@ class App(QMainWindow, Ui_MainWindow):
                 ip_last)
         self.textLog.setText(text)
 
+        if self.checkBoxPortsEnabled.isChecked():
+            scan_settings = ScanSettings((ip_first, ip_last), (port_first, port_last))
+        else:
+            scan_settings = ScanSettings((ip_first, ip_last), None)
+
         self.thread = QThread(self)
-        self.worker = ScanTask()
+        self.worker = ScanTask(scan_settings)
         thread = self.thread
         worker = self.worker
         worker.moveToThread(thread)
@@ -178,22 +185,51 @@ class App(QMainWindow, Ui_MainWindow):
         self.spinBoxPortsLast.setValue(0)
 
 
+class ScanSettings:
+
+    def __init__(self, ip_range, port_range):
+        self.ip_range = ip_range
+        self.port_range = port_range
+
+    def get_ip_first(self):
+        return self.ip_range and self.ip_range[0]
+
+    def get_ip_last(self):
+        return self.ip_range and self.ip_range[1]
+
+    def get_port_first(self):
+        return self.port_range and self.port_range[0]
+
+    def get_port_last(self):
+        return self.port_range and self.port_range[1]
+
+
 class ScanTask(QObject):
 
     message = pyqtSignal(str)
     finished = pyqtSignal()
 
+    def __init__(self, settings):
+        super().__init__()
+        self.ip_first = ipaddress.IPv4Address(settings.get_ip_first())
+        self.ip_last = ipaddress.IPv4Address(settings.get_ip_last())
+        self.port_first = settings.get_port_first()
+        self.port_last = settings.get_port_last()
+
     def process(self):
         self.timer = QTimer()
-        self.nticks = 1
-        self.maxticks = 10
         self.timer.timeout.connect(self.onTimeout)
         self.timer.start(500)
 
     def onTimeout(self):
-        self.message.emit('Tick #' + str(self.nticks))
-        if self.nticks < self.maxticks:
-            self.nticks += 1
+        if self.ip_first <= self.ip_last:
+            self.message.emit('Ip ' + str(self.ip_first))
+            cur_port = self.port_first
+            if cur_port is not None:
+                while cur_port <= self.port_last:
+                    self.message.emit('  port ' + str(cur_port))
+                    cur_port += 1
+            self.ip_first += 1
         else:
             self.timer.stop()
             self.finished.emit()
