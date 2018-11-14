@@ -143,6 +143,7 @@ class App(QMainWindow, Ui_MainWindow):
 
     def onCancelButtonClicked(self):
         self.textLog.append('cancel')
+        self.worker.terminate()
 
     def onQuitButtonClicked(self):
         self.close()
@@ -217,6 +218,8 @@ class ScanTask(QObject):
         self.ip_last = ipaddress.IPv4Address(settings.get_ip_last())
         self.port_first = settings.get_port_first()
         self.port_last = settings.get_port_last()
+        self.pinger = Pinger()
+        self.port_scanner = PortScanner()
         self.f_scan_in_process = False
 
     def process(self):
@@ -229,13 +232,13 @@ class ScanTask(QObject):
             if self.ip_first <= self.ip_last:
                 self.f_scan_in_process = True
                 self.message.emit('ip ' + str(self.ip_first))
-                retc, rets = Pinger().ping(str(self.ip_first), 1, 3)
+                retc, rets = self.pinger.ping(str(self.ip_first), 1, 3)
                 self.message.emit(rets if retc else 'none')
                 cur_port = self.port_first
                 if retc and cur_port is not None:
                     while cur_port <= self.port_last:
                         self.message.emit('port ' + str(cur_port))
-                        ret = PortScanner().is_opened(str(self.ip_first), cur_port)
+                        ret = self.port_scanner.is_opened(str(self.ip_first), cur_port)
                         self.message.emit('yes' if ret else 'no')
                         cur_port += 1
                 self.ip_first += 1
@@ -244,8 +247,16 @@ class ScanTask(QObject):
                 self.timer.stop()
                 self.finished.emit()
 
+    def terminate(self):
+        self.pinger.terminate()
+        self.port_scanner.terminate()
+        self.finished.emit()
+
 
 class Pinger:
+
+    def __init__(self):
+        self.p = None
 
     def ping(self, address, npackets, timeout):
         retok, ms = False, None
@@ -254,9 +265,11 @@ class Pinger:
                 '-c', str(npackets),
                 '-w', str(int(timeout / 1000)),
                 address]
-        p = subprocess.Popen(args,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+        self.p = subprocess.Popen(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        p = self.p
         with p:
             p.wait()
             retok = p.returncode == 0
@@ -266,17 +279,27 @@ class Pinger:
                 ms = olastline.rsplit('/')[-3]
         return (retok, ms)
 
+    def terminate(self):
+        if self.p is not None:
+            self.p.terminate()
+            self.p = None
+
 
 class PortScanner:
+
+    def __init__(self):
+        self.p = None
 
     def is_opened(self, address, port):
         args = ['nmap',
                 '-p',
                 str(port),
                 address]
-        p = subprocess.Popen(args,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+        self.p = subprocess.Popen(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        p = self.p
         with p:
             p.wait()
             retok = p.returncode == 0
@@ -285,6 +308,11 @@ class PortScanner:
                 pat = r'^{}/tcp +open +\S+$'.format(port)
                 mobj = re.search(pat, stdout, flags=re.M)
         return retok and mobj is not None
+
+    def terminate(self):
+        if self.p is not None:
+            self.p.terminate()
+            self.p = None
 
 
 if __name__ == '__main__':
