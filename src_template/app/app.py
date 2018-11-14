@@ -132,10 +132,12 @@ class App(QMainWindow, Ui_MainWindow):
         worker = self.worker
         worker.moveToThread(thread)
         worker.message[str].connect(self.onScanTaskMessageSignal)
+        thread.started.connect(self.onStartScan)
         thread.started.connect(worker.process)
         worker.finished.connect(thread.quit)
         worker.finished.connect(worker.deleteLater)
         thread.finished.connect(thread.deleteLater)
+        thread.finished.connect(self.onEndScan)
         thread.start()
 
     def onScanTaskMessageSignal(self, text):
@@ -185,6 +187,14 @@ class App(QMainWindow, Ui_MainWindow):
     def onPortsClearButtonClicked(self):
         self.spinBoxPortsFirst.setValue(0)
         self.spinBoxPortsLast.setValue(0)
+
+    def onStartScan(self):
+        self.pushButtonControlButtonsScan.setDisabled(True)
+        self.statusbar.showMessage('Scanning...')
+
+    def onEndScan(self):
+        self.pushButtonControlButtonsScan.setDisabled(False)
+        self.statusbar.showMessage('Ready for scan')
 
 
 class ScanSettings:
