@@ -142,7 +142,6 @@ class App(QMainWindow, Ui_MainWindow):
         self.textLog.append(text)
 
     def onCancelButtonClicked(self):
-        self.textLog.append('cancel')
         self.worker.terminate()
 
     def onQuitButtonClicked(self):
@@ -221,6 +220,7 @@ class ScanTask(QObject):
         self.pinger = Pinger()
         self.port_scanner = PortScanner()
         self.f_scan_in_process = False
+        self.f_terminate_recieved = False
 
     def process(self):
         self.timer = QTimer()
@@ -229,14 +229,14 @@ class ScanTask(QObject):
 
     def onTimeout(self):
         if not self.f_scan_in_process:
-            if self.ip_first <= self.ip_last:
+            if not self.f_terminate_recieved and self.ip_first <= self.ip_last:
                 self.f_scan_in_process = True
                 self.message.emit('ip ' + str(self.ip_first))
                 retc, rets = self.pinger.ping(str(self.ip_first), 1, 3)
                 self.message.emit(rets if retc else 'none')
                 cur_port = self.port_first
                 if retc and cur_port is not None:
-                    while cur_port <= self.port_last:
+                    while not self.f_terminate_recieved and cur_port <= self.port_last:
                         self.message.emit('port ' + str(cur_port))
                         ret = self.port_scanner.is_opened(str(self.ip_first), cur_port)
                         self.message.emit('yes' if ret else 'no')
@@ -248,6 +248,7 @@ class ScanTask(QObject):
                 self.finished.emit()
 
     def terminate(self):
+        self.f_terminate_recieved = True
         self.pinger.terminate()
         self.port_scanner.terminate()
         self.finished.emit()
