@@ -36,6 +36,8 @@ from PyQt5.QtCore import (QObject,
                           QTimer)
 
 import ipaddress
+import subprocess
+import re
 
 
 class App(QMainWindow, Ui_MainWindow):
@@ -215,24 +217,74 @@ class ScanTask(QObject):
         self.ip_last = ipaddress.IPv4Address(settings.get_ip_last())
         self.port_first = settings.get_port_first()
         self.port_last = settings.get_port_last()
+        self.f_scan_in_process = False
 
     def process(self):
         self.timer = QTimer()
         self.timer.timeout.connect(self.onTimeout)
-        self.timer.start(500)
+        self.timer.start(100)
 
     def onTimeout(self):
-        if self.ip_first <= self.ip_last:
-            self.message.emit('Ip ' + str(self.ip_first))
-            cur_port = self.port_first
-            if cur_port is not None:
-                while cur_port <= self.port_last:
-                    self.message.emit('  port ' + str(cur_port))
-                    cur_port += 1
-            self.ip_first += 1
-        else:
-            self.timer.stop()
-            self.finished.emit()
+        if not self.f_scan_in_process:
+            if self.ip_first <= self.ip_last:
+                self.f_scan_in_process = True
+                self.message.emit('ip ' + str(self.ip_first))
+                retc, rets = Pinger().ping(str(self.ip_first), 1, 3)
+                self.message.emit(rets if retc else 'none')
+                cur_port = self.port_first
+                if retc and cur_port is not None:
+                    while cur_port <= self.port_last:
+                        self.message.emit('port ' + str(cur_port))
+                        ret = PortScanner().is_opened(str(self.ip_first), cur_port)
+                        self.message.emit('yes' if ret else 'no')
+                        cur_port += 1
+                self.ip_first += 1
+                self.f_scan_in_process = False
+            else:
+                self.timer.stop()
+                self.finished.emit()
+
+
+class Pinger:
+
+    def ping(self, address, npackets, timeout):
+        retok, ms = False, None
+        args = ['ping',
+                '-q',
+                '-c', str(npackets),
+                '-w', str(int(timeout / 1000)),
+                address]
+        p = subprocess.Popen(args,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        with p:
+            p.wait()
+            retok = p.returncode == 0
+            if retok:
+                stdout = p.communicate()[0].decode('latin1')
+                olastline = stdout.splitlines()[-1]
+                ms = olastline.rsplit('/')[-3]
+        return (retok, ms)
+
+
+class PortScanner:
+
+    def is_opened(self, address, port):
+        args = ['nmap',
+                '-p',
+                str(port),
+                address]
+        p = subprocess.Popen(args,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+        with p:
+            p.wait()
+            retok = p.returncode == 0
+            if retok:
+                stdout = p.communicate()[0].decode('latin1')
+                pat = r'^{}/tcp +open +\S+$'.format(port)
+                mobj = re.search(pat, stdout, flags=re.M)
+        return retok and mobj is not None
 
 
 if __name__ == '__main__':
